@@ -17,11 +17,6 @@ export default function SinglePage({ pageContext }) {
   // 사용자의 언어/지역 설정에 맞는 날짜 형태로 표시
   const lastUpdatedFormatted = new Date(lastUpdated).toLocaleString();
 
-  useEffect(() => {
-    if (window) {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    }
-  });
 
   return (
     <div id="top">
@@ -64,15 +59,6 @@ export default function SinglePage({ pageContext }) {
             height: 100px;           /* 부모 높이 지정 필요 */
           `}
       >
-        {/* square01 */}
-        <ins
-          className="adsbygoogle"
-          style={{ display: 'block' }}
-          data-ad-client="ca-pub-1511546096943469"
-          data-ad-slot="8032452972"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        ></ins>
       </div>
 
       <Navigation />
@@ -90,6 +76,16 @@ export default function SinglePage({ pageContext }) {
       ></iframe>
 
       <GlobalChartSlide id="global-chart-slide" dataSource={dataSource} />
+
+       <div
+         css={css`
+           display: flex;
+            justify-content: center; /* 수평 중앙 정렬 */
+           align-items: center;     /* 수직 중앙 정렬 */
+            height: 100px;           /* 부모 높이 지정 필요 */
+          `}
+      >
+      </div>
       <KoreaChartSlide id="korea-chart-slide" dataSource={dataSource} />
       <YoutubeSlide id="youtube-slide" dataSource={dataSource} />
 
