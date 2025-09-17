@@ -20,6 +20,5 @@ module.exports = {
     description:
       '다양한 최신 기술들을 공부하기 위해, 기존 웹개발자가 연습한 페이지(coronaboard.kr)',
     image: 'src/static/redheart.png'
-',
   },
 };
