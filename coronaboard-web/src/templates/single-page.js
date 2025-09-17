@@ -17,11 +17,7 @@ export default function SinglePage({ pageContext }) {
   // 사용자의 언어/지역 설정에 맞는 날짜 형태로 표시
   const lastUpdatedFormatted = new Date(lastUpdated).toLocaleString();
 
-  useEffect(() => {
-    if (window) {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    }
-  });
+
 
   return (
     <div id="top">
@@ -46,9 +42,9 @@ export default function SinglePage({ pageContext }) {
           font-size: 28px;
         `}
       >
-        코로나19(COVID-19)
+        실시간 통계표 테스팅
         <br />
-        실시간 상황판
+        (COVID-19)
       </h1>
       <p className="text-center text-white">
         마지막 업데이트: {lastUpdatedFormatted}
@@ -63,12 +59,6 @@ export default function SinglePage({ pageContext }) {
         `}
       >
         
-        <ins className="adsbygoogle"
-            style={{ display: 'block' }}
-            data-ad-client="ca-pub-6944089488427159"
-            data-ad-slot="4786796354"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
       </div>
 
       <Navigation />
