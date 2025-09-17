@@ -5,12 +5,14 @@ exports.createPages = async ({ actions }) => {
 
   let dataSource;
   try {
-    dataSource = await getDataSource(); // 오늘 데이터 가져오기 시도
+    // 데이터 가져오기
+    dataSource = await getDataSource();
   } catch (err) {
     console.warn('오늘 데이터가 없어서 기본 데이터를 사용합니다.');
+    // 오늘 데이터 없으면 빈 배열로 초기화
     dataSource = {
-      globalStats: [],    // 필요한 기본 구조
-      countryStats: [],   // 필요한 기본 구조
+      globalStats: [],
+      countryStats: [],
     };
   }
 
