@@ -6,7 +6,7 @@ exports.createPages = async ({ actions }) => {
 
   createPage({
     path: '/',
-    component: require.resolve('./src/template/single-page.js'),
+    component: require.resolve('./src/templates/single-page.js'),
     context: { dataSource },
   });
 };
