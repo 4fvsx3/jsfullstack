@@ -19,6 +19,6 @@ module.exports = {
     title: '통계 테스팅',
     description:
       '최신기술들을 공부하기 위해 js로만 fullstacking 하는 coronaboard.kr을 복제해봄',
-    image: 'https://coronaboard.kr/ogimage.png',
+    image: 'src/static/red heart.png',
   },
 };
