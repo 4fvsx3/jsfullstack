@@ -53,11 +53,8 @@ function HelmetWrapper({ title, description }) {
         },
       ]}
     >
-      <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1511546096943469"
-        crossOrigin="anonymous"
-      ></script>
+      {/* 여기에 favicon 추가 */}
+      <link rel="icon" href="/redheart.png" type="image/png" />
     </Helmet>
   );
 }
