@@ -29,7 +29,7 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#663399`,
         display: `standalone`,
-        icon: `static/redheart.png`, // static 폴더 안에 아이콘 넣기
+        icon: `redheart.png`, // ← static 폴더 안 파일이면 static/ 제외
       },
     },
   ],
