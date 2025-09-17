@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { css } from '@emotion/react';
 import { Dashboard } from '../components/dashboard';
@@ -12,19 +12,22 @@ import { YoutubeSlide } from '../components/youtube-slide';
 import HelmetWrapper from '../components/helmet-wrapper';
 
 export default function SinglePage({ pageContext }) {
-  // 안전하게 기본값 처리
-  const dataSource = pageContext.dataSource || {};
-  const lastUpdated = dataSource.lastUpdated || new Date().toISOString();
-  const globalStats = Array.isArray(dataSource.globalStats) ? dataSource.globalStats : [];
-  const notice = Array.isArray(dataSource.notice) ? dataSource.notice : [];
-
+  const { dataSource } = pageContext;
+  const { lastUpdated, globalStats, notice } = dataSource;
+  // 사용자의 언어/지역 설정에 맞는 날짜 형태로 표시
   const lastUpdatedFormatted = new Date(lastUpdated).toLocaleString();
+
+  useEffect(() => {
+    if (window) {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    }
+  });
 
   return (
     <div id="top">
-      <HelmetWrapper title={'홈'} />
 
-      {/* 상단 검은색 배경 */}
+      <HelmetWrapper title={"Home"}/>
+
       <div
         css={css`
           position: absolute;
@@ -34,21 +37,19 @@ export default function SinglePage({ pageContext }) {
           z-index: -99;
         `}
       />
-
       <h1
         css={css`
           padding-top: 48px;
           padding-bottom: 24px;
-          color: red;
+          color: white;
           text-align: center;
           font-size: 28px;
         `}
       >
-        COVID-19
+        코로나19(COVID-19)
         <br />
-        통계판 만들어 보기
+        실시간 상황판
       </h1>
-
       <p className="text-center text-white">
         마지막 업데이트: {lastUpdatedFormatted}
       </p>
@@ -58,27 +59,31 @@ export default function SinglePage({ pageContext }) {
 
       <div
         css={css`
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100px;
+          text-align: center;
         `}
       >
-        {/* square01 */}
+        
+        <ins className="adsbygoogle"
+            style={{ display: 'block' }}
+            data-ad-client="ca-pub-6944089488427159"
+            data-ad-slot="4786796354"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
       </div>
 
       <Navigation />
 
-      {/* 각 슬라이드에 지정된 id 값은 Navigation 안의 Link와 동일해야 함 */}
+      {/* 각 슬라이드에 지정된 id 값은 Navigation 컴포넌트 안의 Link에 지정된 to 값과 동일해야함 */}
       <GlobalSlide id="global-slide" dataSource={dataSource} />
-      <iframe
-        src="https://ads-partners.coupang.com/widgets.html?id=637932&template=carousel&trackingCode=AF0322893&subId=&width=100%25&height=200"
-        width="100%"
-        height="200"
-        frameBorder="0"
-        scrolling="no"
-        referrerPolicy="unsafe-url"
-      ></iframe>
+
+      <iframe src="https://ads-partners.coupang.com/widgets.html?id=637932&template=carousel&trackingCode=AF0322893&subId=&width=100%25&height=200"
+       width="100%" 
+       height="200" 
+       frameborder="0" 
+       scrolling="no" 
+       referrerpolicy="unsafe-url"
+       ></iframe>
+
       <GlobalChartSlide id="global-chart-slide" dataSource={dataSource} />
       <KoreaChartSlide id="korea-chart-slide" dataSource={dataSource} />
       <YoutubeSlide id="youtube-slide" dataSource={dataSource} />
