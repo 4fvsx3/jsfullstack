@@ -15,7 +15,7 @@ module.exports = {
     },
   ],
   siteMetadata: {
-    siteUrl: 'https://coronaboard.kr',
+    siteUrl: 'https://davidshim.kr',
     title: '통계표 테스팅(COVID)',
     description:
       '다양한 최신 기술들을 공부하기 위해, 기존 웹개발자가 연습한 페이지(coronaboard.kr)',
