@@ -22,7 +22,7 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#663399`,
         display: `standalone`,
-        icon: `static/redheart.png`, // ← favicon 경로 (static 폴더 안)
+        icon: `/redheart.png`, // ← favicon 경로 (static 폴더 안)
       },
     },
   ],
