@@ -37,7 +37,7 @@ export default function SinglePage({ pageContext }) {
         css={css`
           padding-top: 48px;
           padding-bottom: 24px;
-          color: white;
+          color: red;
           text-align: center;
           font-size: 28px;
         `}
