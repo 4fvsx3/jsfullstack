@@ -15,10 +15,10 @@ module.exports = {
     },
   ],
   siteMetadata: {
-    siteUrl: 'https://coronaboard.kr',
-    title: '코로나19(COVID-19) 실시간 상황판',
+    siteUrl: 'https://davidshim.kr',
+    title: '통계 테스팅',
     description:
-      '코로나19에 관한 세계 각 국가들의 통계 및 뉴스 등을 취합하여 실시간 정보와 다양한 차트를 제공합니다',
+      '최신기술들을 공부하기 위해 js로만 fullstacking 하는 coronaboard.kr을 복제해봄',
     image: 'https://coronaboard.kr/ogimage.png',
   },
 };
