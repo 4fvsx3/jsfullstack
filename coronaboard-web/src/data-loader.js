@@ -66,7 +66,7 @@ function generateKoreaTestChartData(allGlobalStats) {
 
 function generateGlobalStats(groupedByDate) {
   // const now = new Date();
-  const now = new Date();
+  const now = new Date('2021-06-05');
   const timeZone = 'Asia/Seoul';
   const today = format(utcToZonedTime(now, timeZone), 'yyyy-MM-dd');
   const yesterday = format(
