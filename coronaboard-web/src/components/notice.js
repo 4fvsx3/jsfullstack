@@ -16,7 +16,7 @@ export function Notice(props) {
           font-size: 20px;
         `}
       >
-        [공지사항]
+        [안내 사항]
       </h2>
       {notice.map((x, idx) => (
         <p key={idx}>{x.message}</p>
