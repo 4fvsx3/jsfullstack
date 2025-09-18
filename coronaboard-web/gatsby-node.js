@@ -1,12 +1,24 @@
 const { getDataSource } = require('./src/data-loader');
+const path = require('path');
 
-exports.createPages = async ({ actions }) => {
+exports.createPages = async ({ actions, reporter }) => {
   const { createPage } = actions;
-  const dataSource = await getDataSource();
+
+  let dataSource;
+  try {
+    dataSource = await getDataSource();
+  } catch (err) {
+    reporter.warn(`getDataSource() failed: ${err.message}`);
+    dataSource = null;
+  }
+
+  if (!dataSource) {
+    reporter.warn("No data available for today, building with fallback.");
+  }
 
   createPage({
     path: '/',
-    component: require.resolve('./src/templates/single-page.js'),
+    component: path.resolve('./src/templates/single-page.js'),
     context: { dataSource },
   });
 };
