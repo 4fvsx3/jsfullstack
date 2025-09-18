@@ -9,6 +9,9 @@ npm install
 # 구글 시트에서 최신 데이터 다운로드
 (cd ../tools && node main.js)
 
+# 크롤링
+(cd ../crawler && node index.js)
+
 # 개츠비 배포용 빌드 수행
 NODE_OPTIONS='--max-old-space-size=1536' gatsby build
 
