@@ -12,11 +12,12 @@ import { YoutubeSlide } from '../components/youtube-slide';
 import HelmetWrapper from '../components/helmet-wrapper';
 
 export default function SinglePage({ pageContext }) {
-  const { dataSource } = pageContext || {};
-  if (!dataSource) return <div>오늘 데이터가 없습니다.</div>;
+  const { dataSource } = pageContext;
 
-  const { lastUpdated, globalStats, notice } = dataSource;
-  const lastUpdatedFormatted = new Date(lastUpdated).toLocaleString();
+  // lastUpdated 등 값이 없을 수 있으므로 optional chaining 사용
+  const lastUpdatedFormatted = dataSource?.lastUpdated
+    ? new Date(dataSource.lastUpdated).toLocaleString()
+    : "정보 없음";
 
   return (
     <div id="top">
@@ -47,13 +48,16 @@ export default function SinglePage({ pageContext }) {
         마지막 업데이트: {lastUpdatedFormatted}
       </p>
 
-      <Dashboard globalStats={globalStats} />
-      <Notice notice={notice} />
+      <Dashboard globalStats={dataSource?.globalStats} />
+      <Notice notice={dataSource?.notice} />
+
       <Navigation />
+
       <GlobalSlide id="global-slide" dataSource={dataSource} />
       <GlobalChartSlide id="global-chart-slide" dataSource={dataSource} />
       <KoreaChartSlide id="korea-chart-slide" dataSource={dataSource} />
       <YoutubeSlide id="youtube-slide" dataSource={dataSource} />
+
       <Footer />
     </div>
   );
