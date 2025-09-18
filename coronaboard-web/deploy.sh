@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "$(date '+%Y-%m-%d %H:%M:%S')" >> /home/ubuntu/deploy.log
+
 # 저장소에서 최신 코드 불러오기
 git pull
 
