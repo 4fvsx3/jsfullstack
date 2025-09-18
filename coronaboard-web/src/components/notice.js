@@ -16,7 +16,7 @@ export function Notice(props) {
           font-size: 20px;
           font-weight: bold;      /* 글자 굵게 */
           color: red;             /* 빨간색 */
-          margin-bottom: 10px;    /* 아래 여백 한 줄 정도 */
+          margin-bottom: 16px;    /* 아래 여백 한 줄 정도 */
         `}
       >
         [안내 사항]
