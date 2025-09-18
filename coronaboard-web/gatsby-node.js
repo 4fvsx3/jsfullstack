@@ -1,4 +1,4 @@
-const { getDataSource } = require('./src/data-loader');
+const { getDataSource, getLastAvailableData } = require('./src/data-loader');
 const path = require('path');
 
 exports.createPages = async ({ actions, reporter }) => {
@@ -7,14 +7,17 @@ exports.createPages = async ({ actions, reporter }) => {
   let dataSource;
   try {
     dataSource = await getDataSource();
+    if (!dataSource) {
+      reporter.warn("Today's data is missing. Using last available data for build.");
+      dataSource = await getLastAvailableData();
+    }
   } catch (err) {
-    reporter.warn(`getDataSource() failed: ${err.message}`);
-    dataSource = null;
+    reporter.warn(`Error getting data: ${err.message}. Using last available data.`);
+    dataSource = await getLastAvailableData();
   }
 
   if (!dataSource) {
-    reporter.warn("No data available for today, skipping page creation.");
-    return; // 데이터 없으면 페이지 생성 안함
+    reporter.panic("No available data for build. Build cannot proceed.");
   }
 
   createPage({
