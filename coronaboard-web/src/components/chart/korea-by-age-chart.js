@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import {
   numberWithCommas,
@@ -8,7 +8,7 @@ import { Echart } from '../echart';
 import { colors } from '../../config';
 import { Button, ButtonGroup, Card } from 'react-bootstrap';
 
-function generateChartOption(data, dataType) {
+function generateChartOption(data, dataType, isMobile) {
   const textByDataType = { confirmed: '확진자', death: '사망자' };
 
   const textByAge = {
@@ -34,9 +34,12 @@ function generateChartOption(data, dataType) {
       label: {
         show: true,
         position: 'top',
+        rotate: isMobile ? 0 : 0, // 필요시 모바일에서만 회전
         formatter: (obj) => {
           const percent = ((obj.value / total) * 100).toFixed(1);
-          return `${numberWithCommas(obj.value)}명\n(${percent}%)`;
+          return isMobile
+            ? `${numberWithCommas(obj.value)}명`
+            : `${numberWithCommas(obj.value)}명\n(${percent}%)`;
         },
       },
       data: ageChartData,
@@ -53,6 +56,7 @@ function generateChartOption(data, dataType) {
     grid: {
       left: 40,
       right: 20,
+      bottom: isMobile ? 60 : 40, // 모바일이면 x축 레이블 공간 늘리기
     },
     yAxis: {
       type: 'value',
@@ -65,8 +69,10 @@ function generateChartOption(data, dataType) {
       type: 'category',
       data: ageKeys.map((ageKey) => textByAge[ageKey]),
       axisLabel: {
-        interval: 0, // x축에 눈금마다 표시되는 레이블이 생략되지 않도록 설정
-        rotate: 30,
+        interval: 0,
+        rotate: isMobile ? 30 : 0, // 모바일에서만 회전
+        formatter: (value) =>
+          isMobile && value.length > 4 ? value.slice(0, 3) + '…' : value, // 길면 줄임
       },
     },
     series,
@@ -76,7 +82,17 @@ function generateChartOption(data, dataType) {
 export function KoreaByAgeChart(props) {
   const { koreaByAgeChartData } = props;
   const [dataType, setDataType] = useState('confirmed');
-  const chartOption = generateChartOption(koreaByAgeChartData, dataType);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // 화면 크기에 따라 모바일 여부 체크
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const chartOption = generateChartOption(koreaByAgeChartData, dataType, isMobile);
 
   return (
     <Card>
