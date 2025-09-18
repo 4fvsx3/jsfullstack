@@ -36,7 +36,7 @@ aws s3 sync \
   --exclude "*" \
   --include "*.html" --include "*.json" \
   --delete \
-  ./public s3://coronaboard.kr
+  ./public s3://davidshim.kr
 
 # html, json을 제외한 나머지 파일(js, css 등)은 1년간 캐시
 # 빌드 시 파일 이름에 해시(hash) 자동 추가 → 변경 시 파일 이름 변경됨
@@ -46,4 +46,4 @@ aws s3 sync \
   --cache-control public,max-age=31536000,immutable \
   --exclude "*.html" --exclude "*.json" \
   --delete \
-  ./public s3://coronaboard.kr
+  ./public s3://davidshim.kr
