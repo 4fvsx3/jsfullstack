@@ -1,39 +1,83 @@
 import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { css } from "@emotion/react";
+import { Dashboard } from "../components/dashboard";
+import { Notice } from "../components/notice";
+import { Navigation } from "../components/navigation";
+import { GlobalSlide } from "../components/global-slide";
+import { GlobalChartSlide } from "../components/global-chart-slide";
+import { KoreaChartSlide } from "../components/korea-chart-slide";
+import { Footer } from "../components/footer";
+import { YoutubeSlide } from "../components/youtube-slide";
+import HelmetWrapper from "../components/helmet-wrapper";
 
 export default function SinglePage({ pageContext }) {
-  const { dataSource } = pageContext || {};
-
-  // null-safe 처리
-  if (!dataSource) {
-    return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h1>데이터 없음</h1>
-        <p>현재 데이터를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
+  // null-safe 기본값
+  const {
+    dataSource = {
+      lastUpdated: null,
+      globalStats: {},
+      notice: null,
+    },
+  } = pageContext || {};
 
   const { lastUpdated, globalStats, notice } = dataSource;
-
   const lastUpdatedFormatted = lastUpdated
     ? new Date(lastUpdated).toLocaleString()
-    : "알 수 없음";
+    : "데이터 없음";
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>업데이트 시각: {lastUpdatedFormatted}</h1>
+    <div id="top">
+      <HelmetWrapper title={"Home"} />
 
-      {notice && <p>공지: {notice}</p>}
+      <div
+        css={css`
+          position: absolute;
+          background-color: black;
+          width: 100%;
+          height: 300px;
+          z-index: -99;
+        `}
+      />
+      <h1
+        css={css`
+          padding-top: 48px;
+          padding-bottom: 24px;
+          color: red;
+          text-align: center;
+          font-size: 28px;
+        `}
+      >
+        실시간 통계표 테스팅
+        <br />
+        (COVID-19)
+      </h1>
+      <p className="text-center text-white">
+        마지막 업데이트: {lastUpdatedFormatted}
+      </p>
 
-      {globalStats ? (
-        <div>
-          <p>확진자 수: {globalStats.worldConfirmed}</p>
-          <p>사망자 수: {globalStats.worldDeath}</p>
-          <p>회복자 수: {globalStats.worldReleased}</p>
-        </div>
-      ) : (
-        <p>글로벌 통계 없음</p>
-      )}
+      {/* 데이터 없을 때도 안전하게 */}
+      <Dashboard globalStats={globalStats || {}} />
+      <Notice notice={notice || ""} />
+
+      <Navigation />
+
+      <GlobalSlide id="global-slide" dataSource={dataSource} />
+
+      <iframe
+        src="https://ads-partners.coupang.com/widgets.html?id=637932&template=carousel&trackingCode=AF0322893&subId=&width=100%25&height=200"
+        width="100%"
+        height="200"
+        frameBorder="0"
+        scrolling="no"
+        referrerPolicy="unsafe-url"
+      ></iframe>
+
+      <GlobalChartSlide id="global-chart-slide" dataSource={dataSource} />
+      <KoreaChartSlide id="korea-chart-slide" dataSource={dataSource} />
+      <YoutubeSlide id="youtube-slide" dataSource={dataSource} />
+
+      <Footer />
     </div>
   );
 }
