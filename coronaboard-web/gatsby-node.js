@@ -18,6 +18,6 @@ exports.createPages = async ({ actions }) => {
   createPage({
     path: "/",
     component: path.resolve(`src/templates/single-page.js`),
-    context: { dataSource }, // null일 수도 있음
+    context: { dataSource },
   });
 };
