@@ -31,7 +31,7 @@ export function Dashboard(props) {
     (x) => (x.confirmedPrev || 0) === 0,
   ).length;
 
-  // 대한민국 데이터를 별도 추출해서 사용
+  // 대한민국 데이터를 별도 추출
   const krData = globalStats.find((x) => x.cc === 'KR');
   const {
     confirmed,
@@ -67,23 +67,24 @@ export function Dashboard(props) {
         }
       `}
     >
+      {/* 전 세계 */}
       <h2>전 세계</h2>
       <Row>
-        <Col xs={4} md>
+        <Col xs={6} md={2}>
           <DashboardItem
             text="확진자"
             current={worldConfirmed}
             prev={worldConfirmedPrev}
           />
         </Col>
-        <Col xs={4} md>
+        <Col xs={6} md={2}>
           <DashboardItem
             text="사망자"
             current={worldDeath}
             prev={worldDeathPrev}
           />
         </Col>
-        <Col xs={4} md>
+        <Col xs={6} md={2}>
           <DashboardItem
             text="격리해제"
             current={worldReleased}
@@ -91,10 +92,10 @@ export function Dashboard(props) {
             diffColor="green"
           />
         </Col>
-        <Col xs={6} md>
+        <Col xs={6} md={2}>
           <DashboardItem text="치명률" current={worldFatality} unit="percent" />
         </Col>
-        <Col xs={6} md>
+        <Col xs={6} md={2}>
           <DashboardItem
             text="발생국"
             current={worldCountry}
@@ -103,19 +104,16 @@ export function Dashboard(props) {
         </Col>
       </Row>
 
+      {/* 대한민국 */}
       <h2>대한민국</h2>
       <Row>
-        <Col xs={3} md>
-          <DashboardItem
-            text="확진자"
-            current={confirmed}
-            prev={confirmedPrev}
-          />
+        <Col xs={6} md={3}>
+          <DashboardItem text="확진자" current={confirmed} prev={confirmedPrev} />
         </Col>
-        <Col xs={3} md>
+        <Col xs={6} md={3}>
           <DashboardItem text="사망자" current={death} prev={deathPrev} />
         </Col>
-        <Col xs={3} md>
+        <Col xs={6} md={3}>
           <DashboardItem
             text="격리해제"
             current={released}
@@ -123,16 +121,17 @@ export function Dashboard(props) {
             diffColor="green"
           />
         </Col>
-        <Col xs={3} md>
+        <Col xs={6} md={3}>
           <DashboardItem text="치명률" current={fatality} unit="percent" />
         </Col>
-        <Col xs={4} md>
+
+        <Col xs={6} md={4}>
           <DashboardItem text="총검사자" current={tested} prev={testedPrev} />
         </Col>
-        <Col xs={4} md>
+        <Col xs={6} md={4}>
           <DashboardItem text="검사중" current={testing} prev={testingPrev} />
         </Col>
-        <Col xs={4} md>
+        <Col xs={6} md={4}>
           <DashboardItem
             text="결과음성"
             current={negative}
