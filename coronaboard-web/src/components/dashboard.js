@@ -69,44 +69,27 @@ export function Dashboard(props) {
     >
       {/* 전 세계 */}
       <h2>전 세계</h2>
-      <Row>
+      <Row className="justify-content-center">
         <Col xs={6} md={2}>
-          <DashboardItem
-            text="확진자"
-            current={worldConfirmed}
-            prev={worldConfirmedPrev}
-          />
+          <DashboardItem text="확진자" current={worldConfirmed} prev={worldConfirmedPrev} />
         </Col>
         <Col xs={6} md={2}>
-          <DashboardItem
-            text="사망자"
-            current={worldDeath}
-            prev={worldDeathPrev}
-          />
+          <DashboardItem text="사망자" current={worldDeath} prev={worldDeathPrev} />
         </Col>
         <Col xs={6} md={2}>
-          <DashboardItem
-            text="격리해제"
-            current={worldReleased}
-            prev={worldReleasedPrev}
-            diffColor="green"
-          />
+          <DashboardItem text="격리해제" current={worldReleased} prev={worldReleasedPrev} diffColor="green" />
         </Col>
         <Col xs={6} md={2}>
           <DashboardItem text="치명률" current={worldFatality} unit="percent" />
         </Col>
         <Col xs={6} md={2}>
-          <DashboardItem
-            text="발생국"
-            current={worldCountry}
-            prev={worldCountryPrev}
-          />
+          <DashboardItem text="발생국" current={worldCountry} prev={worldCountryPrev} />
         </Col>
       </Row>
 
       {/* 대한민국 */}
       <h2>대한민국</h2>
-      <Row>
+      <Row className="justify-content-center">
         <Col xs={6} md={3}>
           <DashboardItem text="확진자" current={confirmed} prev={confirmedPrev} />
         </Col>
@@ -114,12 +97,7 @@ export function Dashboard(props) {
           <DashboardItem text="사망자" current={death} prev={deathPrev} />
         </Col>
         <Col xs={6} md={3}>
-          <DashboardItem
-            text="격리해제"
-            current={released}
-            prev={releasedPrev}
-            diffColor="green"
-          />
+          <DashboardItem text="격리해제" current={released} prev={releasedPrev} diffColor="green" />
         </Col>
         <Col xs={6} md={3}>
           <DashboardItem text="치명률" current={fatality} unit="percent" />
@@ -132,12 +110,7 @@ export function Dashboard(props) {
           <DashboardItem text="검사중" current={testing} prev={testingPrev} />
         </Col>
         <Col xs={6} md={4}>
-          <DashboardItem
-            text="결과음성"
-            current={negative}
-            prev={negativePrev}
-            diffColor="green"
-          />
+          <DashboardItem text="결과음성" current={negative} prev={negativePrev} diffColor="green" />
         </Col>
       </Row>
     </Container>
