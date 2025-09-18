@@ -16,7 +16,7 @@ export function Footer() {
           padding: 36px 0;
         `}
       >
-        © 2026년 행복한 일들만 가득하시길 기원합니다.
+        ★ 2026년 행복한 일들만 가득하시길 기원합니다. ★
           연락처 (4fvsx3@gmail.com)
       </Container>
     </div>
