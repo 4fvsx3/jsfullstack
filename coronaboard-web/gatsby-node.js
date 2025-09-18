@@ -19,6 +19,12 @@ exports.createPages = async ({ actions, reporter }) => {
   createPage({
     path: '/',
     component: path.resolve('./src/templates/single-page.js'),
-    context: { dataSource },
+    context: {
+      dataSource: dataSource || {
+        lastUpdated: null,
+        globalStats: {},
+        notice: '',
+      },
+    },
   });
 };
