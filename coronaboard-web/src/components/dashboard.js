@@ -60,11 +60,13 @@ export function Dashboard(props) {
         padding-bottom: 20px;
         border: 1px solid red;
 
-        h2 {
-          padding-top: 10px;
-          padding-bottom: 10px;
-          font-size: 23px;
-        }
+          h2 {
+              padding-top: 10px;
+              padding-bottom: 10px;
+              font-size: 23px;
+              font-weight: bold;   /* 글자 굵게 */
+              color: blue;         /* 글자 색상을 파란색으로 */
+          }
       `}
     >
       {/* 전 세계 */}
