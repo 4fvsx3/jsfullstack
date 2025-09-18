@@ -11,33 +11,19 @@ const fs = require('fs-extra');
 
 const { getYouTubeVideosByKeyword } = require('./youtube');
 
-/**
- * 오늘 데이터가 없으면 마지막 정상 데이터를 가져오도록 수정
- */
 async function getDataSource() {
   const countryByCc = _.keyBy(countryInfo, 'cc');
 
   const apiClient = new ApiClient();
 
-  // 모든 전세계 통계 가져오기
+  // 7장에서 수집해서 저장해둔 전세계 통계를 로드
   const allGlobalStats = await apiClient.getAllGlobalStats();
   const groupedByDate = _.groupBy(allGlobalStats, 'date');
 
-  let globalStats, globalChartDataByCc;
+  // 전체 기간 글로벌 차트 데이터 생성
+  const globalChartDataByCc = generateGlobalChartDataByCc(groupedByDate);
 
-  try {
-    globalStats = generateGlobalStats(groupedByDate);
-    globalChartDataByCc = generateGlobalChartDataByCc(groupedByDate);
-  } catch (err) {
-    console.warn(`Today's data missing: ${err.message}. Using last available data.`);
-    const lastDate = Object.keys(groupedByDate)
-      .sort()
-      .reverse()[0]; // 최신 날짜
-    globalStats = createGlobalStatWithPrevField(groupedByDate[lastDate], []);
-    globalChartDataByCc = generateGlobalChartDataByCc({ [lastDate]: groupedByDate[lastDate] });
-  }
-
-  // 국가별 JSON 파일 생성
+  // static/generated 디렉터리에 각 국가별 JSON 저장
   Object.keys(globalChartDataByCc).forEach((cc) => {
     const genPath = path.join(process.cwd(), `static/generated/${cc}.json`);
     fs.outputFileSync(genPath, JSON.stringify(globalChartDataByCc[cc]));
@@ -45,15 +31,40 @@ async function getDataSource() {
 
   const koreaTestChartData = generateKoreaTestChartData(allGlobalStats);
 
-  // 연령대/성별 통계
+  // 연령/성별 통계
   const { byAge, bySex } = await apiClient.getByAgeAndBySex();
 
   // 유튜브 API
   const youtubeVideos = await getYouTubeVideosByKeyword('코로나19');
 
+  // countryByCc에 전체 기간 글로벌 차트 데이터 추가
+  Object.keys(globalChartDataByCc).forEach((cc) => {
+    if (!countryByCc[cc]) return;
+    countryByCc[cc].chartData = globalChartDataByCc[cc];
+  });
+
+  // 오늘 데이터 가져오기 (없으면 마지막 데이터)
+  let todayStats;
+  const now = new Date();
+  const timeZone = 'Asia/Seoul';
+  const todayStr = format(utcToZonedTime(now, timeZone), 'yyyy-MM-dd');
+  const yesterdayStr = format(utcToZonedTime(subDays(now, 1), timeZone), 'yyyy-MM-dd');
+
+  if (groupedByDate[todayStr]) {
+    todayStats = createGlobalStatWithPrevField(
+      groupedByDate[todayStr],
+      groupedByDate[yesterdayStr]
+    );
+  } else {
+    todayStats = createGlobalStatWithPrevField(
+      groupedByDate[yesterdayStr],
+      groupedByDate[subDays(now, 2)]
+    );
+  }
+
   return {
     lastUpdated: Date.now(),
-    globalStats,
+    globalStats: todayStats,
     countryByCc,
     notice: notice.filter((x) => !x.hidden),
     koreaTestChartData,
@@ -75,29 +86,10 @@ function generateKoreaTestChartData(allGlobalStats) {
   };
 }
 
-function generateGlobalStats(groupedByDate) {
-  const now = new Date();
-  const timeZone = 'Asia/Seoul';
-  const today = format(utcToZonedTime(now, timeZone), 'yyyy-MM-dd');
-  const yesterday = format(
-    utcToZonedTime(subDays(now, 1), timeZone),
-    'yyyy-MM-dd'
-  );
-
-  if (!groupedByDate[today]) {
-    throw new Error('Data for today is missing');
-  }
-
-  return createGlobalStatWithPrevField(
-    groupedByDate[today],
-    groupedByDate[yesterday] || []
-  );
-}
-
 function createGlobalStatWithPrevField(todayStats, yesterdayStats) {
   const yesterdayStatsByCc = _.keyBy(yesterdayStats, 'cc');
 
-  const globalStatWithPrev = todayStats.map((todayStat) => {
+  return todayStats.map((todayStat) => {
     const cc = todayStat.cc;
     const yesterdayStat = yesterdayStatsByCc[cc];
     if (yesterdayStat) {
@@ -112,16 +104,14 @@ function createGlobalStatWithPrevField(todayStats, yesterdayStats) {
     }
     return todayStat;
   });
-
-  return globalStatWithPrev;
 }
 
 function generateGlobalChartDataByCc(groupedByDate) {
   const chartDataByCc = {};
   const dates = Object.keys(groupedByDate).sort();
-
   for (const date of dates) {
     const countriesDataForOneDay = groupedByDate[date];
+
     for (const countryData of countriesDataForOneDay) {
       const cc = countryData.cc;
       if (!chartDataByCc[cc]) {
@@ -138,6 +128,7 @@ function generateGlobalChartDataByCc(groupedByDate) {
       appendToChartData(chartDataByCc[cc], countryData, date);
     }
 
+    // 글로벌 합계
     if (!chartDataByCc['global']) {
       chartDataByCc['global'] = {
         date: [],
@@ -171,19 +162,14 @@ function appendToChartData(chartData, countryData, date) {
     chartData.death.push(countryData.death);
     chartData.released.push(countryData.released);
   } else {
-    const confirmedIncrement = countryData.confirmed - (_.last(chartData.confirmedAcc) || 0);
-    const deathIncrement = countryData.death - (_.last(chartData.deathAcc) || 0);
-    const releasedIncrement = countryData.released - (_.last(chartData.releasedAcc) || 0);
-
-    chartData.confirmed.push(confirmedIncrement);
-    chartData.death.push(deathIncrement);
-    chartData.released.push(releasedIncrement);
+    chartData.confirmed.push(countryData.confirmed - _.last(chartData.confirmedAcc) || 0);
+    chartData.death.push(countryData.death - _.last(chartData.deathAcc) || 0);
+    chartData.released.push(countryData.released - _.last(chartData.releasedAcc) || 0);
   }
 
   chartData.confirmedAcc.push(countryData.confirmed);
   chartData.deathAcc.push(countryData.death);
   chartData.releasedAcc.push(countryData.released);
-
   chartData.date.push(date);
 }
 
