@@ -1,23 +1,25 @@
-const path = require("path");
-const { getDataSource } = require("./src/lib/data");
+const { getDataSource } = require('./src/data-loader');
+const path = require('path');
 
-exports.createPages = async ({ actions }) => {
+exports.createPages = async ({ actions, reporter }) => {
   const { createPage } = actions;
 
-  let dataSource = null;
+  let dataSource;
   try {
     dataSource = await getDataSource();
   } catch (err) {
-    console.warn("getDataSource() failed:", err.message);
+    reporter.warn(`getDataSource() failed: ${err.message}`);
+    dataSource = null;
   }
 
   if (!dataSource) {
-    console.warn("No data available for today, building with fallback.");
+    reporter.warn("No data available for today, skipping page creation.");
+    return; // 데이터 없으면 페이지 생성 안함
   }
 
   createPage({
-    path: "/",
-    component: path.resolve(`src/templates/single-page.js`),
+    path: '/',
+    component: path.resolve('./src/templates/single-page.js'),
     context: { dataSource },
   });
 };
