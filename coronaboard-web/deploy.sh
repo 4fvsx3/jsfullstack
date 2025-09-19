@@ -2,33 +2,44 @@
 
 LOG_FILE="/home/ubuntu/deploy.log"
 
-# 빌드 시작 메시지 (성공 시에는 로그에 남지 않음)
 echo "=== $(date '+%Y-%m-%d %H:%M:%S') Build start ==="
 
-# 각 명령어를 실행하고, 실패 시에만 로그에 기록
 function run_or_log_error {
   "$@" 2>> "$LOG_FILE"
   if [ $? -ne 0 ]; then
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Command failed: $*" >> "$LOG_FILE"
+    echo "Error occurred during: $*"
   fi
 }
 
-# 저장소에서 최신 코드 불러오기
+# 프로젝트 루트
+PROJECT_DIR="/home/ubuntu/jsfullstack/coronaboard-web"
+cd "$PROJECT_DIR" || exit 1
+
+# 캐시/빌드 폴더 정리
+run_or_log_error rm -rf .cache public node_modules
+
+# npm 설치 (정확한 버전 재설치)
+run_or_log_error npm ci
+
+# .cache 폴더 생성 및 권한 설정
+run_or_log_error mkdir -p .cache
+run_or_log_error chown -R ubuntu:ubuntu .cache
+
+# 최신 코드 가져오기
 run_or_log_error git pull
 
-# 의존성 업데이트
-run_or_log_error npm install
-
-# 구글 시트에서 최신 데이터 다운로드
+# 구글 시트 데이터 다운로드
 run_or_log_error bash -c "(cd ../tools && node main.js)"
 
 # 크롤링
 run_or_log_error bash -c "(cd ../crawler && node index.js)"
 
-# Gatsby 빌드 수행
+# Gatsby 빌드 수행 (메모리 옵션 포함)
 run_or_log_error bash -c "NODE_OPTIONS='--max-old-space-size=1536' gatsby build"
 
-# public 폴더 안의 *.html, *.json 파일은 매번 새로 받아야 하므로 캐시 무효화
+# AWS S3 동기화
+# HTML / JSON 캐시 무효화
 run_or_log_error aws s3 sync \
   --acl public-read \
   --cache-control public,max-age=0,must-revalidate \
@@ -37,7 +48,7 @@ run_or_log_error aws s3 sync \
   --delete \
   ./public s3://davidshim.kr
 
-# 나머지 js/css 파일은 1년간 캐시 가능
+# JS/CSS 파일 장기 캐시
 run_or_log_error aws s3 sync \
   --acl public-read \
   --cache-control public,max-age=31536000,immutable \
