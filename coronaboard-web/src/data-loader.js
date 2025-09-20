@@ -16,14 +16,11 @@ async function getDataSource() {
 
   const apiClient = new ApiClient();
 
-  // 7장에서 수집해서 저장해둔 전세계 통계를 로드
   const allGlobalStats = await apiClient.getAllGlobalStats();
   const groupedByDate = _.groupBy(allGlobalStats, 'date');
 
-  // 전체 기간 글로벌 차트 데이터 생성
   const globalChartDataByCc = generateGlobalChartDataByCc(groupedByDate);
 
-  // static/generated 디렉터리에 각 국가별 JSON 저장
   Object.keys(globalChartDataByCc).forEach((cc) => {
     const genPath = path.join(process.cwd(), `static/generated/${cc}.json`);
     fs.outputFileSync(genPath, JSON.stringify(globalChartDataByCc[cc]));
@@ -31,19 +28,14 @@ async function getDataSource() {
 
   const koreaTestChartData = generateKoreaTestChartData(allGlobalStats);
 
-  // 연령/성별 통계
   const { byAge, bySex } = await apiClient.getByAgeAndBySex();
-
-  // 유튜브 API
   const youtubeVideos = await getYouTubeVideosByKeyword('코로나19');
 
-  // countryByCc에 전체 기간 글로벌 차트 데이터 추가
   Object.keys(globalChartDataByCc).forEach((cc) => {
     if (!countryByCc[cc]) return;
     countryByCc[cc].chartData = globalChartDataByCc[cc];
   });
 
-  // 오늘 데이터 가져오기 (없으면 마지막 데이터)
   let todayStats;
   const now = new Date();
   const timeZone = 'Asia/Seoul';
@@ -74,9 +66,18 @@ async function getDataSource() {
   };
 }
 
+// 마지막 데이터 가져오기 함수 추가
+async function getLastAvailableData() {
+  const filePath = path.join(process.cwd(), 'static/generated/global.json');
+  if (await fs.pathExists(filePath)) {
+    return fs.readJson(filePath);
+  }
+  // fallback: 빈 객체
+  return {};
+}
+
 function generateKoreaTestChartData(allGlobalStats) {
   const krData = allGlobalStats.filter((x) => x.cc === 'KR');
-
   return {
     date: krData.map((x) => x.date),
     confirmedRate: krData.map((x) => x.confirmed / (x.confirmed + x.negative)),
@@ -128,7 +129,6 @@ function generateGlobalChartDataByCc(groupedByDate) {
       appendToChartData(chartDataByCc[cc], countryData, date);
     }
 
-    // 글로벌 합계
     if (!chartDataByCc['global']) {
       chartDataByCc['global'] = {
         date: [],
@@ -175,4 +175,5 @@ function appendToChartData(chartData, countryData, date) {
 
 module.exports = {
   getDataSource,
+  getLastAvailableData, // 추가됨
 };
