@@ -20,8 +20,6 @@ exports.createPages = async ({ actions, reporter }) => {
     reporter.panic("No available data for build. Build cannot proceed.");
   }
 
-  console.log('dataSource in createPages:', dataSource);
-
   createPage({
     path: '/',
     component: path.resolve('./src/templates/single-page.js'),
