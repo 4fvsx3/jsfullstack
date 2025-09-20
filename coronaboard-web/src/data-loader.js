@@ -13,7 +13,6 @@ const { getYouTubeVideosByKeyword } = require('./youtube');
 
 async function getDataSource() {
   const countryByCc = _.keyBy(countryInfo, 'cc');
-
   const apiClient = new ApiClient();
 
   const allGlobalStats = await apiClient.getAllGlobalStats();
@@ -66,14 +65,15 @@ async function getDataSource() {
   };
 }
 
-// 마지막 데이터 가져오기 함수 추가
+// 마지막 데이터 가져오기 함수 (수정됨)
 async function getLastAvailableData() {
   const filePath = path.join(process.cwd(), 'static/generated/global.json');
   if (await fs.pathExists(filePath)) {
-    return fs.readJson(filePath);
+    const data = await fs.readJson(filePath);
+    data.globalStats = data.globalStats || [];
+    return data;
   }
-  // fallback: 빈 객체
-  return {};
+  return { globalStats: [] };
 }
 
 function generateKoreaTestChartData(allGlobalStats) {
@@ -175,5 +175,5 @@ function appendToChartData(chartData, countryData, date) {
 
 module.exports = {
   getDataSource,
-  getLastAvailableData, // 추가됨
+  getLastAvailableData,
 };
