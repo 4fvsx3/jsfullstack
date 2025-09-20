@@ -26,7 +26,6 @@ async function getDataSource() {
   });
 
   const koreaTestChartData = generateKoreaTestChartData(allGlobalStats);
-
   const { byAge, bySex } = await apiClient.getByAgeAndBySex();
   const youtubeVideos = await getYouTubeVideosByKeyword('코로나19');
 
@@ -65,7 +64,7 @@ async function getDataSource() {
   };
 }
 
-// 마지막 데이터 가져오기 함수 (수정됨)
+// 마지막 사용 가능한 데이터 가져오기
 async function getLastAvailableData() {
   const filePath = path.join(process.cwd(), 'static/generated/global.json');
   if (await fs.pathExists(filePath)) {
@@ -73,7 +72,7 @@ async function getLastAvailableData() {
     data.globalStats = data.globalStats || [];
     return data;
   }
-  return { globalStats: [] };
+  return { globalStats: [] }; // 항상 배열
 }
 
 function generateKoreaTestChartData(allGlobalStats) {
@@ -89,7 +88,6 @@ function generateKoreaTestChartData(allGlobalStats) {
 
 function createGlobalStatWithPrevField(todayStats, yesterdayStats) {
   const yesterdayStatsByCc = _.keyBy(yesterdayStats, 'cc');
-
   return todayStats.map((todayStat) => {
     const cc = todayStat.cc;
     const yesterdayStat = yesterdayStatsByCc[cc];
