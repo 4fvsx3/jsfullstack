@@ -15,15 +15,19 @@ async function getDataSource() {
   const countryByCc = _.keyBy(countryInfo, 'cc');
   const apiClient = new ApiClient();
 
+  // API 호출
   const allGlobalStats = await apiClient.getAllGlobalStats();
   const groupedByDate = _.groupBy(allGlobalStats, 'date');
 
   const globalChartDataByCc = generateGlobalChartDataByCc(groupedByDate);
 
-  Object.keys(globalChartDataByCc).forEach((cc) => {
-    const genPath = path.join(process.cwd(), `static/generated/${cc}.json`);
-    fs.outputFileSync(genPath, JSON.stringify(globalChartDataByCc[cc]));
-  });
+  // static/generated 디렉터리에 각 국가별 JSON 비동기 저장
+  await Promise.all(
+    Object.keys(globalChartDataByCc).map(async (cc) => {
+      const genPath = path.join(process.cwd(), `static/generated/${cc}.json`);
+      await fs.outputFile(genPath, JSON.stringify(globalChartDataByCc[cc]));
+    })
+  );
 
   const koreaTestChartData = generateKoreaTestChartData(allGlobalStats);
   const { byAge, bySex } = await apiClient.getByAgeAndBySex();
@@ -160,9 +164,9 @@ function appendToChartData(chartData, countryData, date) {
     chartData.death.push(countryData.death);
     chartData.released.push(countryData.released);
   } else {
-    chartData.confirmed.push(countryData.confirmed - _.last(chartData.confirmedAcc) || 0);
-    chartData.death.push(countryData.death - _.last(chartData.deathAcc) || 0);
-    chartData.released.push(countryData.released - _.last(chartData.releasedAcc) || 0);
+    chartData.confirmed.push(countryData.confirmed - (_.last(chartData.confirmedAcc) || 0));
+    chartData.death.push(countryData.death - (_.last(chartData.deathAcc) || 0));
+    chartData.released.push(countryData.released - (_.last(chartData.releasedAcc) || 0));
   }
 
   chartData.confirmedAcc.push(countryData.confirmed);
